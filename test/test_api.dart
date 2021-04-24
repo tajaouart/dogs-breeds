@@ -23,4 +23,18 @@ void main() {
     expect(subBreeds, isNot(null));
     expect(subBreeds, isNotEmpty);
   });
+
+  test('Random image should not be null', () async {
+    final api = Api();
+
+    List<Breed> listOfBreeds = await api.getAllBreeds();
+
+    listOfBreeds.shuffle();
+    Breed breed = listOfBreeds.first;
+
+    String randomImage = await api.getBreedRandomImage(breed.name);
+
+    expect(randomImage, isNot(null));
+    expect(randomImage.contains(breed.name), true);
+  });
 }

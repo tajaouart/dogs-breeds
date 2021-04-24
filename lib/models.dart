@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
 class Breed {
-  Breed({@required this.name, @required this.subBreeds}) {
+  Breed(
+      {@required this.name,
+      @required this.subBreeds,
+      @required this.imageUrl}) {
     id = Uuid().v1();
   }
 
   String id;
   String name;
+  String imageUrl;
   List<dynamic> subBreeds;
 
   static List<Breed> fromMap(Map<String, dynamic> map) {
