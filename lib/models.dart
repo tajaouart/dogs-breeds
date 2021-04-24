@@ -3,11 +3,10 @@ import 'package:uuid/uuid.dart';
 
 class Breed {
   Breed(
-      {@required this.name,
+      {@required this.id,
+      @required this.name,
       @required this.subBreeds,
-      @required this.imageUrl}) {
-    id = Uuid().v1();
-  }
+      @required this.imageUrl});
 
   String id;
   String name;
@@ -20,6 +19,17 @@ class Breed {
     return List<Breed>.generate(
         map.keys.length,
         (int index) => Breed(
-            name: keys.elementAt(index), subBreeds: values.elementAt(index)));
+            id: Uuid().v1(),
+            name: keys.elementAt(index),
+            subBreeds: values.elementAt(index)));
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, String>{
+      'id': id,
+      'name': name,
+      'imageUrl': imageUrl,
+      'subBreeds': subBreeds.join(";"),
+    };
   }
 }

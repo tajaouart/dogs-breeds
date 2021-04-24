@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components.dart';
 import 'models.dart';
@@ -44,7 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    Provider.of<BreedViewModel>(context, listen: false).fetchBreeds();
+    SharedPreferences.getInstance().then((prefs) {
+      Provider.of<BreedViewModel>(context, listen: false).fetchBreeds(prefs);
+    });
     super.initState();
   }
 
@@ -93,8 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget option1(viewModel) {
-    return (viewModel.breeds != null && viewModel.breeds.isNotEmpty)
+  Widget option1(BreedViewModel viewModel) {
+    return (viewModel.listBreeds != null && viewModel.listBreeds.isNotEmpty)
         ? SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.all(0),
@@ -102,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 spacing: 24,
                 runSpacing: 24,
                 children: [
-                  for (final Breed breed in viewModel.breeds)
+                  for (final Breed breed in viewModel.listBreeds)
                     InkWell(
                       onTap: () {},
                       child: Container(
