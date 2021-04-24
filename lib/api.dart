@@ -12,7 +12,6 @@ class Api {
       for (final Breed breed in breeds) {
         breed.imageUrl = await getImageUrl(breed.name);
       }
-      print(response);
       return breeds;
     } catch (e) {
       print(e);
@@ -24,7 +23,6 @@ class Api {
     try {
       var response = await Dio().get('https://dog.ceo/api/breed/$beerd/list');
       List<String> subBreeds = response.data["message"].cast<String>();
-      print(response);
       return subBreeds;
     } catch (e) {
       print(e);
@@ -36,8 +34,17 @@ class Api {
       var response =
           await Dio().get('https://dog.ceo/api/breed/$beerd/images/random');
       String randomImage = response.data["message"] as String;
-      print(response);
       return randomImage;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<dynamic> login(String name, String passwd) async {
+    try {
+      var response = await Dio().post('https://reqres.in/api/users',
+          data: {"name": name, "passwd": passwd});
+      return response.data;
     } catch (e) {
       print(e);
     }

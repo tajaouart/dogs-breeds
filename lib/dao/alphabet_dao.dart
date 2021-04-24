@@ -31,11 +31,11 @@ class BreedDao {
   }
 
   Future<List<Breed>> findAllBreeds() async {
-    // Query the table for all The Dogs.
+    // Query the table for all The breeds.
     final List<Map<String, dynamic>> maps =
         await (await database).query('breeds');
 
-    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    // Convert the List<Map<String, dynamic> into a List<Breed>.
     return List.generate(maps.length, (i) {
       return Breed(
         id: maps[i]['id'].toString(),

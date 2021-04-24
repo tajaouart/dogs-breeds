@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api.dart';
 import 'components.dart';
 import 'models.dart';
 
@@ -40,8 +41,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  final userController = TextEditingController();
+  final passwdController = TextEditingController();
 
   @override
   void initState() {
@@ -62,8 +63,103 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget loginFragment() {
-    return Center(
-      child: Text('Login'),
+    return FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder:
+          (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
+        Widget child;
+        if (snapshot.hasData || snapshot.hasError) {
+          if (snapshot.data.getBool('is_logged_in') ?? false) {
+            child = Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Logged in",
+                    style: TextStyle(color: Colors.green, fontSize: 25),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Icon(
+                    Icons.check,
+                    color: Colors.green,
+                    size: 32,
+                  )
+                ],
+              ),
+            );
+          } else {
+            child = Container(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 64,
+                      ),
+                      Text(
+                        "Login",
+                        style: TextStyle(color: dogBlue, fontSize: 25),
+                      ),
+                      SizedBox(
+                        height: 32,
+                      ),
+                      TextField(
+                        controller: userController,
+                        decoration: InputDecoration(hintText: 'username'),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      TextField(
+                        controller: passwdController,
+                        decoration: InputDecoration(hintText: 'password'),
+                      ),
+                      SizedBox(
+                        height: 32,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Api()
+                                .login(
+                                    userController.text, passwdController.text)
+                                .then((value) {
+                              setState(() {
+                                if (value["id"] != null) {
+                                  SharedPreferences.getInstance().then((value) {
+                                    value.setBool('is_logged_in', true);
+                                  });
+                                }
+                              });
+                              print(value);
+                            });
+                          },
+                          child: Text("Login"))
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+        } else {
+          child = Column(children: const <Widget>[
+            SizedBox(
+              child: CircularProgressIndicator(),
+              width: 60,
+              height: 60,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text('Connecting...'),
+            )
+          ]);
+        }
+        return Center(
+          child: child,
+        );
+      },
     );
   }
 
@@ -196,6 +292,20 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          TextButton(
+              onPressed: () {
+                SharedPreferences.getInstance().then((value) {
+                  setState(() {
+                    value.setBool('is_logged_in', false);
+                  });
+                });
+              },
+              child: Text(
+                "Log out",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
       ),
       body: Center(
         child: _widgetOptions(viewModel, _selectedIndex),

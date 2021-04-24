@@ -37,4 +37,14 @@ void main() {
     expect(randomImage, isNot(null));
     expect(randomImage.contains(breed.name), true);
   });
+
+  test('Post content should be returned in the response', () async {
+    final api = Api();
+
+    dynamic reponse = await api.login('enzo', '123456');
+
+    expect(reponse, isNot(null));
+    expect(reponse['name'], 'enzo');
+    expect(reponse['passwd'], '123456');
+  });
 }
