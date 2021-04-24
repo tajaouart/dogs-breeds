@@ -41,7 +41,9 @@ class BreedDao {
         id: maps[i]['id'].toString(),
         name: maps[i]['name'],
         imageUrl: maps[i]['imageUrl'],
-        subBreeds: maps[i]['subBreeds'].toString().split(';'),
+        subBreeds: maps[i]['subBreeds'].toString().isEmpty
+            ? []
+            : maps[i]['subBreeds'].toString().split(';'),
       );
     });
   }

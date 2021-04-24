@@ -57,46 +57,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final BreedViewModel viewModel = Provider.of<BreedViewModel>(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: _widgetOptions(viewModel, _selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Login',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-
   Widget _widgetOptions(BreedViewModel viewModel, int index) {
-    return index == 0 ? option1(viewModel) : option2();
+    return index == 0 ? homeFragment(viewModel) : loginFragment();
   }
 
-  Widget option2() {
+  Widget loginFragment() {
     return Center(
       child: Text('Login'),
     );
   }
 
-  Widget option1(BreedViewModel viewModel) {
+  Widget homeFragment(BreedViewModel viewModel) {
     return (viewModel.listBreeds != null && viewModel.listBreeds.isNotEmpty)
         ? SingleChildScrollView(
             child: Padding(
@@ -107,7 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   for (final Breed breed in viewModel.listBreeds)
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showDetailModal(breed);
+                      },
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.4,
                         height: MediaQuery.of(context).size.width * 0.4,
@@ -144,4 +117,107 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         : CircularProgressIndicator();
   }
+
+  void showDetailModal(Breed breed) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          color: dogWhite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(breed.imageUrl),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                  height: 200,
+                ),
+                Container(
+                    color: dogBlue,
+                    width: MediaQuery.of(context).size.width,
+                    height: 40,
+                    child: Center(
+                        child: Text(
+                      breed.name.inCaps,
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ))),
+                SizedBox(
+                  height: 32,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Sub-breeds : ${breed.subBreeds.length}",
+                        style: TextStyle(color: Colors.grey, fontSize: 18),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Column(
+                        children: <Widget>[
+                          for (final String subBreed in breed.subBreeds)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                onTap: () {},
+                                leading:
+                                    Image.asset('assets/pets_black_24dp.png'),
+                                title: Text(subBreed.inCaps),
+                              ),
+                            )
+                        ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final BreedViewModel viewModel = Provider.of<BreedViewModel>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: _widgetOptions(viewModel, _selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Login',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: dogBlue,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
 }
+
+const dogBlue = const Color(0xFF1A91DB);
+const dogWhite = const Color(0xFFEEEEEE);
