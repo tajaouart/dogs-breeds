@@ -2,9 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import 'api.dart';
 import 'components.dart';
+import 'dao/database.dart';
 import 'models.dart';
 
 void main() {
@@ -188,9 +191,39 @@ class _MyHomePageState extends State<MyHomePage> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(3)),
                                 child: Container(
-                                  child: Image.network(
-                                    breed.imageUrl,
-                                    fit: BoxFit.cover,
+                                  child: FutureBuilder<String>(
+                                    future: getImageUrl(breed.name),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String> snapshot) {
+                                      Widget child;
+                                      if (snapshot.hasData) {
+                                        getDatabasesPath().then((value) {
+                                          breed.imageUrl = snapshot.data;
+                                          AppDatabase database =
+                                              AppDatabase(value);
+                                          final breedDao = database.breedDao;
+                                          breedDao.updateBreed(breed);
+                                        });
+
+                                        child = FadeInImage.memoryNetwork(
+                                          placeholder: kTransparentImage,
+                                          image: snapshot.data,
+                                          fit: BoxFit.cover,
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        child = const Icon(
+                                          Icons.image,
+                                          size: 60,
+                                        );
+                                      } else {
+                                        child = Center(
+                                          child: const SizedBox(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      }
+                                      return child;
+                                    },
                                   ),
                                 ),
                               ),
@@ -216,11 +249,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void showDetailModal(Breed breed) {
     showModalBottomSheet<void>(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height,
-          color: dogWhite,
+          decoration: BoxDecoration(
+            color: dogWhite,
+            borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(16),
+                topRight: const Radius.circular(16)),
+          ),
+          height: MediaQuery.of(context).size.height * 0.8,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -228,12 +268,15 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(16),
+                        topRight: const Radius.circular(16)),
                     image: DecorationImage(
                       image: NetworkImage(breed.imageUrl),
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  height: 200,
+                  height: 300,
                 ),
                 Container(
                     color: dogBlue,

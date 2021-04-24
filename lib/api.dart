@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:dogs_breeds/components.dart';
 import 'package:dogs_breeds/models.dart';
 
 class Api {
@@ -9,9 +8,7 @@ class Api {
     try {
       var response = await Dio().get('https://dog.ceo/api/breeds/list/all');
       List<Breed> breeds = Breed.fromMap(response.data["message"]);
-      for (final Breed breed in breeds) {
-        breed.imageUrl = await getImageUrl(breed.name);
-      }
+
       return breeds;
     } catch (e) {
       print(e);

@@ -47,4 +47,15 @@ class BreedDao {
       );
     });
   }
+
+  Future<void> updateBreed(Breed breed) async {
+    await (await database).update(
+      'breeds',
+      breed.toMap(),
+      // Ensure that the Dog has a matching id.
+      where: "id = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [breed.id],
+    );
+  }
 }
