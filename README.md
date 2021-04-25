@@ -1,16 +1,20 @@
 # dogs_breeds
 
-A new Flutter application.
 
-## Getting Started
+## Provider
 
-This project is a starting point for a Flutter application.
+Provider version is in the main branch.
 
-A few resources to get you started if this is your first Flutter project:
+## Bloc
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Bloc version of the app is in the bloc branch.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+### Trello :
+
+https://trello.com/invite/b/cnoghmsQ/52db8312790cd2628eac59819d8ae428/dog-breed
+
+
+
+By **TAJAOAUART Mounir**
+tajaouart.com
