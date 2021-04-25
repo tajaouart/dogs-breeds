@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:dogs_breeds/api.dart';
 import 'package:dogs_breeds/models.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,5 +47,11 @@ void main() {
     expect(reponse, isNot(null));
     expect(reponse['name'], 'enzo');
     expect(reponse['passwd'], '123456');
+  });
+
+  test('Post with no content should also return a response', () async {
+    var response = await Dio().post('https://reqres.in/api/users');
+    expect(response.data, isNot(null));
+    expect(response.data['id'], isNot(null));
   });
 }

@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 64,
                     ),
                     Text(
-                      "Login",
+                      "Authentification",
                       style: TextStyle(color: dogBlue, fontSize: 25),
                     ),
                     SizedBox(
@@ -150,7 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                         onPressed: () {
                           Api()
-                              .login(userController.text, passwdController.text)
+                              .login(userController.text ?? "",
+                                  passwdController.text ?? "")
                               .then((value) {
                             setState(() {
                               if (value["id"] != null) {
@@ -162,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             print(value);
                           });
                         },
-                        child: Text("Login"))
+                        child: Icon(Icons.login)),
                   ],
                 ),
               ),

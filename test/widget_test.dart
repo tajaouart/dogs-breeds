@@ -5,26 +5,32 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:dogs_breeds/components.dart';
+import 'package:dogs_breeds/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:dogs_breeds/main.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  testWidgets('Go to login tab', (WidgetTester tester) async {
+    await tester.pumpWidget(ChangeNotifierProvider(
+      create: (BuildContext context) => BreedViewModel(),
+      child: MyApp(),
+    ));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    SharedPreferences.setMockInitialValues({'is_logged_in': false});
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Tap the 'login' tab and trigger a frame.
+    await tester.tap(find.byIcon(Icons.account_circle));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that we moved to login tab
+    expect(find.text('...'), findsOneWidget);
+    await tester.pump();
+    // Authentification is the head title of the screen
+    expect(find.text('Authentification'), findsOneWidget);
+    // login button
+    expect(find.byIcon(Icons.login), findsOneWidget);
   });
 }
