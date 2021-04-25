@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import 'api.dart';
 import 'components.dart';
@@ -71,7 +70,33 @@ class _MyHomePageState extends State<MyHomePage> {
       builder:
           (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
         Widget child;
-        if (snapshot.hasData || snapshot.hasError) {
+        if (snapshot.hasError) {
+          child = Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  child: Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                  ),
+                ),
+                Text(
+                  'Error',
+                  style: TextStyle(color: Colors.red),
+                ),
+                SizedBox(
+                  height: 32,
+                ),
+                TextButton(
+                    onPressed: () {
+                      setState(() {});
+                    },
+                    child: Text(
+                      "Retry",
+                      style: TextStyle(color: dogBlue, fontSize: 18),
+                    ))
+              ]);
+        } else if (snapshot.hasData) {
           if (snapshot.data.getBool('is_logged_in') ?? false) {
             child = Center(
               child: Row(
@@ -93,71 +118,60 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           } else {
-            child = Container(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 64,
-                      ),
-                      Text(
-                        "Login",
-                        style: TextStyle(color: dogBlue, fontSize: 25),
-                      ),
-                      SizedBox(
-                        height: 32,
-                      ),
-                      TextField(
-                        controller: userController,
-                        decoration: InputDecoration(hintText: 'username'),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      TextField(
-                        controller: passwdController,
-                        decoration: InputDecoration(hintText: 'password'),
-                      ),
-                      SizedBox(
-                        height: 32,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Api()
-                                .login(
-                                    userController.text, passwdController.text)
-                                .then((value) {
-                              setState(() {
-                                if (value["id"] != null) {
-                                  SharedPreferences.getInstance().then((value) {
-                                    value.setBool('is_logged_in', true);
-                                  });
-                                }
-                              });
-                              print(value);
+            child = Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 64,
+                    ),
+                    Text(
+                      "Login",
+                      style: TextStyle(color: dogBlue, fontSize: 25),
+                    ),
+                    SizedBox(
+                      height: 32,
+                    ),
+                    TextField(
+                      controller: userController,
+                      decoration: InputDecoration(hintText: 'username'),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    TextField(
+                      controller: passwdController,
+                      decoration: InputDecoration(hintText: 'password'),
+                    ),
+                    SizedBox(
+                      height: 32,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Api()
+                              .login(userController.text, passwdController.text)
+                              .then((value) {
+                            setState(() {
+                              if (value["id"] != null) {
+                                SharedPreferences.getInstance().then((value) {
+                                  value.setBool('is_logged_in', true);
+                                });
+                              }
                             });
-                          },
-                          child: Text("Login"))
-                    ],
-                  ),
+                            print(value);
+                          });
+                        },
+                        child: Text("Login"))
+                  ],
                 ),
               ),
             );
           }
         } else {
-          child = Column(children: const <Widget>[
-            SizedBox(
-              child: CircularProgressIndicator(),
-              width: 60,
-              height: 60,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text('Connecting...'),
-            )
-          ]);
+          child = Center(
+            child: Text('...'),
+          );
         }
         return Center(
           child: child,
@@ -168,80 +182,103 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget homeFragment(BreedViewModel viewModel) {
     return (viewModel.listBreeds != null && viewModel.listBreeds.isNotEmpty)
-        ? SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(0),
-              child: Wrap(
-                spacing: 24,
-                runSpacing: 24,
-                children: [
-                  for (final Breed breed in viewModel.listBreeds)
-                    InkWell(
-                      onTap: () {
-                        showDetailModal(breed);
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.width * 0.4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(3)),
-                                child: Container(
-                                  child: FutureBuilder<String>(
-                                    future: getImageUrl(breed.name),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<String> snapshot) {
-                                      Widget child;
-                                      if (snapshot.hasData) {
-                                        getDatabasesPath().then((value) {
-                                          breed.imageUrl = snapshot.data;
-                                          AppDatabase database =
-                                              AppDatabase(value);
-                                          final breedDao = database.breedDao;
-                                          breedDao.updateBreed(breed);
-                                        });
+        ? Padding(
+            padding: EdgeInsets.all(0),
+            child: GridView.count(
+              padding: EdgeInsets.all(16),
+              crossAxisCount: 2,
+              crossAxisSpacing: 24.0,
+              mainAxisSpacing: 24.0,
+              children: [
+                for (final Breed breed in viewModel.listBreeds)
+                  InkWell(
+                    onTap: () {
+                      showDetailModal(breed);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: MediaQuery.of(context).size.width * 0.4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(3)),
+                              child: Container(
+                                  child: (breed.imageUrl == null ||
+                                          breed.imageUrl.isEmpty)
+                                      ? FutureBuilder<String>(
+                                          future: getImageUrl(breed.name),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<String> snapshot) {
+                                            Widget child;
+                                            if (snapshot.hasData) {
+                                              getDatabasesPath().then((value) {
+                                                breed.imageUrl = snapshot.data;
+                                                AppDatabase database =
+                                                    AppDatabase(value);
+                                                final breedDao =
+                                                    database.breedDao;
+                                                breedDao.updateBreed(breed);
+                                              });
 
-                                        child = FadeInImage.memoryNetwork(
-                                          placeholder: kTransparentImage,
-                                          image: snapshot.data,
-                                          fit: BoxFit.cover,
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        child = const Icon(
-                                          Icons.image,
-                                          size: 60,
-                                        );
-                                      } else {
-                                        child = Center(
-                                          child: const SizedBox(
-                                            child: CircularProgressIndicator(),
+                                              child = Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        snapshot.data),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              child = const Icon(
+                                                Icons.image,
+                                                size: 60,
+                                              );
+                                            } else {
+                                              child = Container(
+                                                color: Colors.black12,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            Colors.white),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            return child;
+                                          },
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            image: DecorationImage(
+                                              image:
+                                                  NetworkImage(breed.imageUrl),
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                        );
-                                      }
-                                      return child;
-                                    },
-                                  ),
-                                ),
-                              ),
+                                        )),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 8.0, right: 8.0, bottom: 8),
-                              child: Text(
-                                breed.name.inCaps,
-                                textAlign: TextAlign.left,
-                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 8.0, right: 8.0, bottom: 8),
+                            child: Text(
+                              breed.name.inCaps,
+                              textAlign: TextAlign.left,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    )
-                ],
-              ),
+                    ),
+                  )
+              ],
             ),
           )
         : CircularProgressIndicator();
@@ -253,74 +290,71 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
+        return ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(16),
+              topRight: const Radius.circular(16)),
+          child: Container(
             color: dogWhite,
-            borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(16),
-                topRight: const Radius.circular(16)),
-          ),
-          height: MediaQuery.of(context).size.height * 0.8,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(16),
-                        topRight: const Radius.circular(16)),
-                    image: DecorationImage(
-                      image: NetworkImage(breed.imageUrl),
-                      fit: BoxFit.cover,
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(breed.imageUrl),
+                        fit: BoxFit.cover,
+                      ),
                     ),
+                    height: 300,
                   ),
-                  height: 300,
-                ),
-                Container(
-                    color: dogBlue,
-                    width: MediaQuery.of(context).size.width,
-                    height: 40,
-                    child: Center(
-                        child: Text(
-                      breed.name.inCaps,
-                      style: TextStyle(color: Colors.white, fontSize: 25),
-                    ))),
-                SizedBox(
-                  height: 32,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sub-breeds : ${breed.subBreeds.length}",
-                        style: TextStyle(color: Colors.grey, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Column(
-                        children: <Widget>[
-                          for (final String subBreed in breed.subBreeds)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                onTap: () {},
-                                leading:
-                                    Image.asset('assets/pets_black_24dp.png'),
-                                title: Text(subBreed.inCaps),
-                              ),
-                            )
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                      )
-                    ],
+                  Container(
+                      color: dogBlue,
+                      width: MediaQuery.of(context).size.width,
+                      height: 40,
+                      child: Center(
+                          child: Text(
+                        breed.name.inCaps,
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ))),
+                  SizedBox(
+                    height: 32,
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Sub-breeds : ${breed.subBreeds.length}",
+                          style: TextStyle(color: Colors.grey, fontSize: 18),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            for (final String subBreed in breed.subBreeds)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListTile(
+                                  onTap: () {},
+                                  leading:
+                                      Image.asset('assets/pets_black_24dp.png'),
+                                  title: Text(subBreed.inCaps),
+                                ),
+                              )
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
