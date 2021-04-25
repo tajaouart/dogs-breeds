@@ -370,18 +370,32 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          TextButton(
-              onPressed: () {
-                SharedPreferences.getInstance().then((value) {
-                  setState(() {
-                    value.setBool('is_logged_in', false);
-                  });
-                });
-              },
-              child: Text(
-                "Log out",
-                style: TextStyle(color: Colors.white),
-              ))
+          FutureBuilder<SharedPreferences>(
+            future: SharedPreferences.getInstance(),
+            builder: (BuildContext context,
+                AsyncSnapshot<SharedPreferences> snapshot) {
+              Widget child = Center();
+              if (snapshot.hasData) {
+                if (snapshot.data.getBool('is_logged_in') ?? false) {
+                  child = TextButton(
+                      onPressed: () {
+                        SharedPreferences.getInstance().then((value) {
+                          setState(() {
+                            value.setBool('is_logged_in', false);
+                          });
+                        });
+                      },
+                      child: Text(
+                        "Log out",
+                        style: TextStyle(color: Colors.white),
+                      ));
+                }
+              }
+              return Center(
+                child: child,
+              );
+            },
+          )
         ],
       ),
       body: Center(
