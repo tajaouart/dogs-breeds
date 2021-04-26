@@ -213,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           future: getImageUrl(breed.name),
                                           builder: (BuildContext context,
                                               AsyncSnapshot<String> snapshot) {
-                                            Widget child;
+                                            Widget child = Center();
                                             if (snapshot.hasData) {
                                               getDatabasesPath().then((value) {
                                                 breed.imageUrl = snapshot.data;
@@ -238,33 +238,50 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 Icons.image,
                                                 size: 60,
                                               );
-                                            } else {
-                                              child = Container(
+                                            }
+                                            return Stack(children: [
+                                              Positioned.fill(
+                                                  child: Container(
                                                 color: Colors.black12,
                                                 child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                                Color>(
-                                                            Colors.white),
+                                                  child: Container(
+                                                    width: 32,
+                                                    height: 32,
+                                                    child: Image.asset(
+                                                      'assets/dog.png',
+                                                    ),
                                                   ),
                                                 ),
-                                              );
-                                            }
-                                            return child;
+                                              )),
+                                              child
+                                            ]);
                                           },
                                         )
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            image: DecorationImage(
-                                              image:
-                                                  NetworkImage(breed.imageUrl),
-                                              fit: BoxFit.cover,
+                                      : Stack(children: [
+                                          Positioned.fill(
+                                              child: Container(
+                                            color: Colors.black12,
+                                            child: Center(
+                                              child: Container(
+                                                width: 32,
+                                                height: 32,
+                                                child: Image.asset(
+                                                  'assets/dog.png',
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        )),
+                                          )),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.black12,
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                    breed.imageUrl),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )
+                                        ])),
                             ),
                           ),
                           Padding(
@@ -282,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           )
-        : CircularProgressIndicator();
+        : displayShimmmer(context);
   }
 
   void showDetailModal(Breed breed) {

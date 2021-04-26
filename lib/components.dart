@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:dogs_breeds/api.dart';
 import 'package:dogs_breeds/models.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'dao/database.dart';
@@ -74,4 +76,50 @@ extension CapExtension on String {
   String get allInCaps => this.toUpperCase();
   String get capitalizeFirstofEach =>
       this.split(" ").map((str) => str.capitalize).join(" ");
+}
+
+Widget displayShimmmer(BuildContext context) {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey[300],
+    highlightColor: Colors.grey[100],
+    child: Padding(
+      padding: EdgeInsets.all(0),
+      child: GridView.count(
+        padding: EdgeInsets.all(16),
+        crossAxisCount: 2,
+        crossAxisSpacing: 24.0,
+        mainAxisSpacing: 24.0,
+        children: [
+          for (var i = 20; i >= 1; i--)
+            Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              height: MediaQuery.of(context).size.width * 0.4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      child: Container(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 8.0, right: 8.0, bottom: 8),
+                    child: Container(
+                      height: 20,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      color: Colors.black,
+                      child: Center(),
+                    ),
+                  ),
+                ],
+              ),
+            )
+        ],
+      ),
+    ),
+  );
 }
