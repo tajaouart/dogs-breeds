@@ -11,6 +11,9 @@ import 'package:sqflite/sqflite.dart';
 
 import 'dao/database.dart';
 
+const dogBlue = const Color(0xFF1A91DB);
+const dogWhite = const Color(0xFFEEEEEE);
+
 class BreedService {
   static Future<List<Breed>> getBreedsList() async {
     final List<Breed> listBreeds = await Api().getAllBreeds();

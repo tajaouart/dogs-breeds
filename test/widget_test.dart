@@ -26,7 +26,7 @@ void main() {
     await tester.pump();
 
     // Verify that we moved to login tab
-    expect(find.text('...'), findsOneWidget);
+    expect(find.text('Connecting...'), findsOneWidget);
     await tester.pump();
     // Authentification is the head title of the screen
     expect(find.text('Authentification'), findsOneWidget);
