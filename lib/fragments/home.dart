@@ -2,6 +2,7 @@ import 'package:dogs_breeds/components.dart';
 import 'package:dogs_breeds/dao/database.dart';
 import 'package:dogs_breeds/models.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sqflite/sqflite.dart';
 
 Widget homeFragment(
@@ -113,10 +114,9 @@ Widget homeFragment(
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 8.0, right: 8.0, bottom: 8),
-                            child: Text(
-                              breed.name.inCaps,
-                              textAlign: TextAlign.left,
-                            ),
+                            child: Text(breed.name.inCaps,
+                                textAlign: TextAlign.left,
+                                style: GoogleFonts.openSans(color: dogBlue)),
                           ),
                         ],
                       ),
@@ -163,7 +163,8 @@ void showDetailModal(Breed breed, BuildContext context) {
                     child: Center(
                         child: Text(
                       breed.name.inCaps,
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+                      style: GoogleFonts.openSans(
+                          color: Colors.white, fontSize: 25),
                     ))),
                 SizedBox(
                   height: 32,
@@ -175,7 +176,8 @@ void showDetailModal(Breed breed, BuildContext context) {
                     children: [
                       Text(
                         "Sub-breeds : ${breed.subBreeds.length}",
-                        style: TextStyle(color: Colors.grey, fontSize: 18),
+                        style: GoogleFonts.roboto(
+                            color: Colors.grey, fontSize: 18),
                       ),
                       SizedBox(
                         height: 16,
@@ -189,7 +191,10 @@ void showDetailModal(Breed breed, BuildContext context) {
                                 onTap: () {},
                                 leading:
                                     Image.asset('assets/pets_black_24dp.png'),
-                                title: Text(subBreed.inCaps),
+                                title: Text(
+                                  subBreed.inCaps,
+                                  style: GoogleFonts.openSans(),
+                                ),
                               ),
                             )
                         ],

@@ -1,5 +1,6 @@
 import 'package:dogs_breeds/components.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget loginFragment(
@@ -76,41 +77,45 @@ Widget loginFragment(
           );
         } else {
           child = Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset('assets/cautious_dog.png'),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset('assets/cautious_dog.png'),
+                  ),
+                  Text(
+                    "Authentification",
+                    style: GoogleFonts.comfortaa(color: dogBlue, fontSize: 25),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 64.0, right: 64, top: 32, bottom: 32),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 40,
+                        ),
+                        TextFormField(
+                          controller: userController,
+                          decoration: InputDecoration(hintText: 'username'),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        TextField(
+                          obscureText: true,
+                          controller: passwdController,
+                          decoration: InputDecoration(hintText: 'password'),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Authentification",
-                      style: TextStyle(color: dogBlue, fontSize: 25),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    TextFormField(
-                      controller: userController,
-                      decoration: InputDecoration(hintText: 'username'),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    TextField(
-                      obscureText: true,
-                      controller: passwdController,
-                      decoration: InputDecoration(hintText: 'password'),
-                    ),
-                    SizedBox(
-                      height: 32,
-                    ),
-                    ElevatedButton(
-                        onPressed: onLogin, child: Icon(Icons.login)),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  ElevatedButton(onPressed: onLogin, child: Icon(Icons.login)),
+                ],
               ),
             ),
           );
