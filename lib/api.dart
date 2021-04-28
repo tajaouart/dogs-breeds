@@ -6,8 +6,8 @@ class Api {
 
   Future<List<Breed>> getAllBreeds() async {
     try {
-      var response = await Dio().get('https://dog.ceo/api/breeds/list/all');
-      List<Breed> breeds = Breed.fromMap(response.data["message"]);
+      final response = await Dio().get('https://dog.ceo/api/breeds/list/all');
+      List<Breed> breeds = Breed.fromMap(response.data['message']);
 
       return breeds;
     } catch (e) {
@@ -16,31 +16,33 @@ class Api {
     }
   }
 
-  Future<List<String>> getSubBreeds(String beerd) async {
+  Future<List<String>> getSubBreeds(String breed) async {
     try {
-      var response = await Dio().get('https://dog.ceo/api/breed/$beerd/list');
-      List<String> subBreeds = response.data["message"].cast<String>();
+      final response = await Dio().get('https://dog.ceo/api/breed/$breed/list');
+      List<String> subBreeds = response.data['message'].cast<String>();
       return subBreeds;
     } catch (e) {
       print(e);
     }
+    return <String>[];
   }
 
-  Future<String> getBreedRandomImage(String beerd) async {
+  Future<String> getBreedRandomImage(String breed) async {
     try {
-      var response =
-          await Dio().get('https://dog.ceo/api/breed/$beerd/images/random');
-      String randomImage = response.data["message"] as String;
+      final response =
+          await Dio().get('https://dog.ceo/api/breed/$breed/images/random');
+      String randomImage = response.data['message'] as String;
       return randomImage;
     } catch (e) {
       print(e);
     }
+    return '';
   }
 
   Future<dynamic> login(String name, String passwd) async {
     try {
-      var response = await Dio().post('https://reqres.in/api/users',
-          data: {"name": name, "passwd": passwd});
+      final response = await Dio().post('https://reqres.in/api/users',
+          data: {'name': name, 'passwd': passwd});
       return response.data;
     } catch (e) {
       print(e);

@@ -17,18 +17,18 @@ Widget homeFragment(
               crossAxisCount: 2,
               crossAxisSpacing: 24.0,
               mainAxisSpacing: 24.0,
-              children: [
+              children: <Widget>[
                 for (final Breed breed in viewModel.listBreeds)
                   InkWell(
                     onTap: () {
-                      showDetailModal(breed, context);
+                      showDetailModal(breed: breed, context: context);
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       height: MediaQuery.of(context).size.width * 0.4,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           Expanded(
                             child: ClipRRect(
                               borderRadius:
@@ -42,10 +42,11 @@ Widget homeFragment(
                                               AsyncSnapshot<String> snapshot) {
                                             Widget child = Center();
                                             if (snapshot.hasData) {
-                                              getDatabasesPath().then((value) {
+                                              getDatabasesPath()
+                                                  .then((String path) {
                                                 breed.imageUrl = snapshot.data;
                                                 AppDatabase database =
-                                                    AppDatabase(value);
+                                                    AppDatabase(path);
                                                 final breedDao =
                                                     database.breedDao;
                                                 breedDao.updateBreed(breed);
@@ -66,7 +67,7 @@ Widget homeFragment(
                                                 size: 60,
                                               );
                                             }
-                                            return Stack(children: [
+                                            return Stack(children: <Widget>[
                                               Positioned.fill(
                                                   child: Container(
                                                 color: Colors.black12,
@@ -84,7 +85,7 @@ Widget homeFragment(
                                             ]);
                                           },
                                         )
-                                      : Stack(children: [
+                                      : Stack(children: <Widget>[
                                           Positioned.fill(
                                               child: Container(
                                             color: Colors.black12,
@@ -126,10 +127,10 @@ Widget homeFragment(
             ),
           ),
         )
-      : displayShimmmer(context);
+      : displayShimmer(context);
 }
 
-void showDetailModal(Breed breed, BuildContext context) {
+void showDetailModal({@required Breed breed, @required BuildContext context}) {
   showModalBottomSheet<void>(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -173,22 +174,35 @@ void showDetailModal(Breed breed, BuildContext context) {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sub-breeds : ${breed.subBreeds.length}",
-                        style: GoogleFonts.roboto(
-                            color: Colors.grey, fontSize: 18),
+                    children: <Widget>[
+                      RichText(
+                        text: TextSpan(children: <TextSpan>[
+                          TextSpan(
+                            text: 'Sub-breeds :  ',
+                            style: GoogleFonts.roboto(
+                                color: Colors.grey, fontSize: 18),
+                          ),
+                          TextSpan(
+                            text: '${breed.subBreeds.length}',
+                            style: GoogleFonts.roboto(
+                                color: dogBlue, fontSize: 18),
+                          )
+                        ]),
                       ),
                       SizedBox(
                         height: 16,
                       ),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           for (final String subBreed in breed.subBreeds)
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ListTile(
-                                onTap: () {},
+                                onTap: () {
+                                  showDetailModal(
+                                      breed: breed, context: context);
+                                },
                                 leading:
                                     Image.asset('assets/pets_black_24dp.png'),
                                 title: Text(
@@ -198,7 +212,6 @@ void showDetailModal(Breed breed, BuildContext context) {
                               ),
                             )
                         ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
                       )
                     ],
                   ),

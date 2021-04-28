@@ -7,13 +7,14 @@ import 'breed_dao.dart';
 
 class AppDatabase {
   Future<Database> database;
+
   AppDatabase(String s) {
     database = openDatabase(
       join(s, 'breeds_database.db'),
       onCreate: (db, version) async {
         await db.execute(
-          "CREATE TABLE breeds(id TEXT PRIMARY KEY," +
-              " name TEXT, imageUrl TEXT, subBreeds TEXT);",
+          'CREATE TABLE breeds(id TEXT PRIMARY KEY,' +
+              ' name TEXT, imageUrl TEXT, subBreeds TEXT);',
         );
       },
       version: 1,

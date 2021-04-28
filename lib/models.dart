@@ -6,7 +6,8 @@ class Breed {
       {@required this.id,
       @required this.name,
       @required this.subBreeds,
-      @required this.imageUrl});
+      // not required because imageUrl will be fetched separately
+      this.imageUrl});
 
   String id;
   String name;
@@ -29,7 +30,7 @@ class Breed {
       'id': id,
       'name': name,
       'imageUrl': imageUrl,
-      'subBreeds': subBreeds.join(";"),
+      'subBreeds': subBreeds.join(';'),
     };
   }
 }

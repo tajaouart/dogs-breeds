@@ -7,7 +7,7 @@ void main() {
   test('Breeds list should not be empty', () async {
     final api = Api();
 
-    List<Breed> listOfBreeds = await api.getAllBreeds();
+    final List<Breed> listOfBreeds = await api.getAllBreeds();
     expect(listOfBreeds, isNot(null));
     expect(listOfBreeds, isNotEmpty);
   });
@@ -15,11 +15,11 @@ void main() {
   test('Sub-breeds list should not be empty', () async {
     final api = Api();
 
-    List<Breed> listOfBreeds = await api.getAllBreeds();
-    Breed breed =
+    final List<Breed> listOfBreeds = await api.getAllBreeds();
+    final Breed breed =
         listOfBreeds.firstWhere((element) => element.subBreeds.isNotEmpty);
 
-    List<String> subBreeds = await api.getSubBreeds(breed.name);
+    final List<String> subBreeds = await api.getSubBreeds(breed.name);
 
     expect(subBreeds, isNot(null));
     expect(subBreeds, isNotEmpty);
@@ -28,12 +28,12 @@ void main() {
   test('Random image should not be null', () async {
     final api = Api();
 
-    List<Breed> listOfBreeds = await api.getAllBreeds();
+    final List<Breed> listOfBreeds = await api.getAllBreeds();
 
     listOfBreeds.shuffle();
-    Breed breed = listOfBreeds.first;
+    final Breed breed = listOfBreeds.first;
 
-    String randomImage = await api.getBreedRandomImage(breed.name);
+    final String randomImage = await api.getBreedRandomImage(breed.name);
 
     expect(randomImage, isNot(null));
     expect(randomImage.contains(breed.name), true);
@@ -50,7 +50,7 @@ void main() {
   });
 
   test('Post with no content should also return a response', () async {
-    var response = await Dio().post('https://reqres.in/api/users');
+    final response = await Dio().post('https://reqres.in/api/users');
     expect(response.data, isNot(null));
     expect(response.data['id'], isNot(null));
   });

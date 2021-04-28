@@ -19,14 +19,16 @@ class BreedDao {
   }
 
   Future<void> insertAllBreeds(List<Breed> breeds) async {
-    database.then((value) {
-      breeds.forEach((alphabet) {
-        value.insert(
+    // since there isn't a way to insert all data at once
+    // we insert them one by one
+    database.then((Database db) {
+      for (final Breed breed in breeds) {
+        db.insert(
           'breeds',
-          alphabet.toMap(),
+          breed.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-      });
+      }
     });
   }
 
@@ -36,7 +38,7 @@ class BreedDao {
         await (await database).query('breeds');
 
     // Convert the List<Map<String, dynamic> into a List<Breed>.
-    return List.generate(maps.length, (i) {
+    return List<Breed>.generate(maps.length, (i) {
       return Breed(
         id: maps[i]['id'].toString(),
         name: maps[i]['name'],
@@ -53,7 +55,7 @@ class BreedDao {
       'breeds',
       breed.toMap(),
       // Ensure that the Dog has a matching id.
-      where: "id = ?",
+      where: 'id = ?',
       // Pass the Dog's id as a whereArg to prevent SQL injection.
       whereArgs: [breed.id],
     );

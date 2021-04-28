@@ -41,13 +41,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Tabs' index
   int _selectedIndex = 0;
   final userController = TextEditingController();
   final passwdController = TextEditingController();
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((prefs) {
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
       Provider.of<BreedViewModel>(context, listen: false).fetchBreeds(prefs);
     });
     userController.text = 'Enzo';
@@ -65,16 +66,19 @@ class _MyHomePageState extends State<MyHomePage> {
     return index == 0
         ? homeFragment(viewModel: viewModel, context: context)
         : loginFragment(
+            userController: userController,
+            passwdController: passwdController,
             onRetry: () {
               setState(() {});
             },
             onLogin: () {
               Api()
                   .login(userController.text, passwdController.text)
-                  .then((response) {
+                  .then((dynamic response) {
                 setState(() {
                   if (response['id'] != null) {
-                    SharedPreferences.getInstance().then((prefs) {
+                    SharedPreferences.getInstance()
+                        .then((SharedPreferences prefs) {
                       prefs.setBool('is_logged_in', true);
                       if (response['name'] != null) {
                         prefs.setString('name', response['name']);
@@ -84,8 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               });
             },
-            userController: userController,
-            passwdController: passwdController);
+          );
   }
 
   @override
@@ -95,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: [
+        actions: <Widget>[
           FutureBuilder<SharedPreferences>(
             future: SharedPreferences.getInstance(),
             builder: (BuildContext context,
@@ -105,14 +108,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (snapshot.data.getBool('is_logged_in') ?? false) {
                   child = TextButton(
                       onPressed: () {
-                        SharedPreferences.getInstance().then((value) {
+                        SharedPreferences.getInstance()
+                            .then((SharedPreferences prefs) {
                           setState(() {
-                            value.setBool('is_logged_in', false);
+                            prefs.setBool('is_logged_in', false);
                           });
                         });
                       },
                       child: Text(
-                        "Log out",
+                        'Log out',
                         style: TextStyle(color: Colors.white),
                       ));
                 }

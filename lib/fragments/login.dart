@@ -11,7 +11,7 @@ Widget loginFragment(
   return FutureBuilder<SharedPreferences>(
     future: SharedPreferences.getInstance(),
     builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-      Widget child;
+      Widget child = Center();
       if (snapshot.hasError) {
         child = Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -32,100 +32,97 @@ Widget loginFragment(
               TextButton(
                   onPressed: onRetry,
                   child: Text(
-                    "Retry",
+                    'Retry',
                     style: TextStyle(color: dogBlue, fontSize: 18),
                   ))
             ]);
       } else if (snapshot.hasData) {
         if (snapshot.data.getBool('is_logged_in') ?? false) {
-          child = Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FutureBuilder<SharedPreferences>(
-                    future: SharedPreferences.getInstance(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<SharedPreferences> snapshot) {
-                      if (snapshot.hasData) {
-                        return RichText(
-                          text: TextSpan(
-                            text: 'Hello ',
-                            style: TextStyle(color: dogBlue, fontSize: 25),
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text:
-                                      '${snapshot.data.getString('name') ?? ''}',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(text: ' 😃'),
-                            ],
-                          ),
-                        );
-
-                        return Text(
-                          "Hello ${snapshot.data.getString('name') ?? ''}",
-                          style: TextStyle(fontSize: 25),
-                        );
-                      }
-                      {
-                        return Center();
-                      }
-                    }),
-                Image.asset('assets/welcome.png')
-              ],
-            ),
+          child = Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FutureBuilder<SharedPreferences>(
+                  future: SharedPreferences.getInstance(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<SharedPreferences> snapshot) {
+                    if (snapshot.hasData) {
+                      return RichText(
+                        text: TextSpan(
+                          text: 'Hello ',
+                          style: TextStyle(color: dogBlue, fontSize: 25),
+                          children: <TextSpan>[
+                            TextSpan(
+                                text:
+                                    '${snapshot.data.getString('name') ?? ''}',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: ' 😃'),
+                          ],
+                        ),
+                      );
+                    }
+                    {
+                      return Center();
+                    }
+                  }),
+              Image.asset('assets/welcome.png')
+            ],
           );
         } else {
-          child = Center(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset('assets/cautious_dog.png'),
+          child = SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset('assets/cautious_dog.png'),
+                ),
+                Text(
+                  'Authentification',
+                  style: GoogleFonts.comfortaa(color: dogBlue, fontSize: 25),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 64.0, right: 64, top: 32, bottom: 32),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40,
+                      ),
+                      TextFormField(
+                        controller: userController,
+                        decoration: InputDecoration(hintText: 'username'),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      TextField(
+                        obscureText: true,
+                        controller: passwdController,
+                        decoration: InputDecoration(hintText: 'password'),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Authentification",
-                    style: GoogleFonts.comfortaa(color: dogBlue, fontSize: 25),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 64.0, right: 64, top: 32, bottom: 32),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 40,
-                        ),
-                        TextFormField(
-                          controller: userController,
-                          decoration: InputDecoration(hintText: 'username'),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        TextField(
-                          obscureText: true,
-                          controller: passwdController,
-                          decoration: InputDecoration(hintText: 'password'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 32,
-                  ),
-                  ElevatedButton(onPressed: onLogin, child: Icon(Icons.login)),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 32,
+                ),
+                ElevatedButton(onPressed: onLogin, child: Icon(Icons.login)),
+              ],
             ),
           );
         }
       } else {
-        child = Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CircularProgressIndicator(), Text('Connecting...')],
-          ),
+        child = Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Connecting...',
+                style: GoogleFonts.openSans(color: dogBlue, fontSize: 20),
+              ),
+            )
+          ],
         );
       }
       return Container(
