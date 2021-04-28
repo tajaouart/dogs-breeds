@@ -2,13 +2,13 @@ import 'package:dogs_breeds/fragments/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'api.dart';
-import 'components.dart';
 import 'fragments/login.dart';
-import 'models.dart';
+import 'model/api.dart';
+import 'model/breed_repo.dart';
+import 'model/components.dart';
+import 'model/models.dart';
 
 class DogBlocObserver extends BlocObserver {
   @override
@@ -109,11 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      fetchBreeds(prefs).then((List<Breed> breeds) {
-        context.read<BreedBloc>().add(breeds);
-      });
-    });
+    breedsBloc..getBreeds();
 
     return Scaffold(
       appBar: AppBar(
@@ -149,14 +145,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: BlocBuilder<BreedBloc, List<Breed>>(
-          builder: (_, breeds) {
-            return Center(
-              child: _widgetOptions(breeds, _selectedIndex),
-            );
-          },
-        ),
-      ),
+          child: StreamBuilder<BreedResponse>(
+              stream: breedsBloc.subject.stream,
+              builder: (context, AsyncSnapshot<BreedResponse> snapshot) {
+                return Center(
+                  child: _widgetOptions(
+                      snapshot.data == null ? [] : snapshot.data.breeds,
+                      _selectedIndex),
+                );
+              })),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[

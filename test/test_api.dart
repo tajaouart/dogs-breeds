@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:dogs_breeds/api.dart';
-import 'package:dogs_breeds/models.dart';
+import 'package:dogs_breeds/model/api.dart';
+import 'package:dogs_breeds/model/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

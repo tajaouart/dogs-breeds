@@ -1,6 +1,6 @@
-import 'package:dogs_breeds/components.dart';
 import 'package:dogs_breeds/dao/database.dart';
-import 'package:dogs_breeds/models.dart';
+import 'package:dogs_breeds/model/components.dart';
+import 'package:dogs_breeds/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sqflite/sqflite.dart';

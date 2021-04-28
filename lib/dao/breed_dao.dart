@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dogs_breeds/models.dart';
+import 'package:dogs_breeds/model/models.dart';
 import 'package:sqflite/sqflite.dart';
 
 class BreedDao {

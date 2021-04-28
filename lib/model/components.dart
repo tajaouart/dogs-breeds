@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dogs_breeds/api.dart';
-import 'package:dogs_breeds/models.dart';
+import 'package:dogs_breeds/model/api.dart';
+import 'package:dogs_breeds/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'dao/database.dart';
+import '../dao/database.dart';
 
 const dogBlue = const Color(0xFF1A91DB);
 const dogWhite = const Color(0xFFEEEEEE);

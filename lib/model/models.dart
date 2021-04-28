@@ -1,6 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
+class BreedResponse {
+  final List<Breed> breeds;
+  final String error;
+
+  BreedResponse(this.breeds, this.error);
+
+  BreedResponse.fromJson(Map<String, dynamic> map)
+      : breeds = List<Breed>.generate(
+            map.keys.length,
+            (int index) => Breed(
+                id: Uuid().v1(),
+                name: map.keys.elementAt(index),
+                subBreeds: map.values.elementAt(index))),
+        error = "";
+
+  BreedResponse.withError(String errorValue)
+      : breeds = [],
+        error = errorValue;
+}
+
 class Breed {
   Breed(
       {@required this.id,

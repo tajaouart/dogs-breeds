@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:dogs_breeds/models.dart';
+import 'package:dogs_breeds/model/models.dart';
 
 class Api {
   int value = 0;
