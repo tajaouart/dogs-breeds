@@ -5,19 +5,16 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:dogs_breeds/components.dart';
 import 'package:dogs_breeds/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('Go to login tab', (WidgetTester tester) async {
-    await tester.pumpWidget(ChangeNotifierProvider(
-      create: (BuildContext context) => BreedViewModel(),
-      child: MyApp(),
-    ));
+    Bloc.observer = DogBlocObserver();
+    await tester.pumpWidget(MyApp());
 
     SharedPreferences.setMockInitialValues({'is_logged_in': false});
 

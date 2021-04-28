@@ -1,20 +1,38 @@
 import 'package:dogs_breeds/fragments/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 import 'components.dart';
 import 'fragments/login.dart';
+import 'models.dart';
+
+class DogBlocObserver extends BlocObserver {
+  @override
+  void onEvent(Bloc bloc, Object event) {
+    super.onEvent(bloc, event);
+    print(event);
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    print(error);
+    super.onError(bloc, error, stackTrace);
+  }
+}
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (BuildContext context) => BreedViewModel(),
-      child: MyApp(),
-    ),
-  );
+  Bloc.observer = DogBlocObserver();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,7 +44,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Dogs-breeds'),
+      home: BlocProvider(
+          create: (_) => BreedBloc(), child: MyHomePage(title: 'Dogs-breeds')),
     );
   }
 }
@@ -48,9 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((SharedPreferences prefs) {
-      Provider.of<BreedViewModel>(context, listen: false).fetchBreeds(prefs);
-    });
     userController.text = 'Enzo';
     passwdController.text = '123456';
     super.initState();
@@ -62,9 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Widget _widgetOptions(BreedViewModel viewModel, int index) {
+  Widget _widgetOptions(List<Breed> breeds, int index) {
     return index == 0
-        ? homeFragment(viewModel: viewModel, context: context)
+        ? homeFragment(breeds: breeds, context: context)
         : loginFragment(
             userController: userController,
             passwdController: passwdController,
@@ -93,7 +109,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final BreedViewModel viewModel = Provider.of<BreedViewModel>(context);
+    SharedPreferences.getInstance().then((prefs) {
+      fetchBreeds(prefs).then((List<Breed> breeds) {
+        context.read<BreedBloc>().add(breeds);
+      });
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -129,7 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: _widgetOptions(viewModel, _selectedIndex),
+        child: BlocBuilder<BreedBloc, List<Breed>>(
+          builder: (_, breeds) {
+            return Center(
+              child: _widgetOptions(breeds, _selectedIndex),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,

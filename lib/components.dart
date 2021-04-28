@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dogs_breeds/api.dart';
 import 'package:dogs_breeds/models.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,30 +27,26 @@ class BreedService {
   }
 }
 
-class BreedViewModel extends ChangeNotifier {
+Future<List<Breed>> fetchBreeds(SharedPreferences _preferences) async {
   List<Breed> listBreeds = <Breed>[];
-
-  Future<void> fetchBreeds(SharedPreferences _preferences) async {
-    if (!(_preferences.getBool('data_is_loaded') ?? false)) {
-      try {
-        final AppDatabase database = AppDatabase(await getDatabasesPath());
-        final breeds = await BreedService.getBreedsList();
-        final breedDao = database.breedDao;
-        breedDao
-            .insertAllBreeds(breeds)
-            .then((_) => _preferences.setBool('data_is_loaded', true));
-        listBreeds = breeds;
-        notifyListeners();
-      } on TimeoutException catch (_) {
-        listBreeds = null;
-      } on SocketException catch (_) {
-        listBreeds = null;
-      }
-    } else {
-      listBreeds = await findAllBreeds();
-      notifyListeners();
+  if (!(_preferences.getBool('data_is_loaded') ?? false)) {
+    try {
+      final AppDatabase database = AppDatabase(await getDatabasesPath());
+      final breeds = await BreedService.getBreedsList();
+      final breedDao = database.breedDao;
+      breedDao
+          .insertAllBreeds(breeds)
+          .then((_) => _preferences.setBool('data_is_loaded', true));
+      listBreeds = breeds;
+    } on TimeoutException catch (_) {
+      listBreeds = null;
+    } on SocketException catch (_) {
+      listBreeds = null;
     }
+  } else {
+    listBreeds = await findAllBreeds();
   }
+  return listBreeds;
 }
 
 Future<List<Breed>> findAllBreeds() async {
@@ -126,4 +122,17 @@ Shimmer displayShimmer(BuildContext context) {
       ],
     ),
   );
+}
+
+class BreedBloc extends Bloc<List<Breed>, List<Breed>> {
+  BreedBloc() : super(<Breed>[]);
+
+  @override
+  Stream<List<Breed>> mapEventToState(List<Breed> breeds) async* {
+    if (breeds == null) {
+      addError(Exception('unsupported event'));
+    } else {
+      yield breeds;
+    }
+  }
 }

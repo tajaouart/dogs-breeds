@@ -6,8 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sqflite/sqflite.dart';
 
 Widget homeFragment(
-    {@required BreedViewModel viewModel, @required BuildContext context}) {
-  return (viewModel.listBreeds != null && viewModel.listBreeds.isNotEmpty)
+    {@required List<Breed> breeds, @required BuildContext context}) {
+  return (breeds != null && breeds.isNotEmpty)
       ? Container(
           color: Colors.white,
           child: Padding(
@@ -18,7 +18,7 @@ Widget homeFragment(
               crossAxisSpacing: 24.0,
               mainAxisSpacing: 24.0,
               children: <Widget>[
-                for (final Breed breed in viewModel.listBreeds)
+                for (final Breed breed in breeds)
                   InkWell(
                     onTap: () {
                       showDetailModal(breed: breed, context: context);
