@@ -27,6 +27,7 @@ class BreedService {
   }
 }
 
+// checks local data otherwise gets data from API
 Future<List<Breed>> fetchBreeds(SharedPreferences _preferences) async {
   List<Breed> listBreeds = <Breed>[];
   if (!(_preferences.getBool('data_is_loaded') ?? false)) {
@@ -55,6 +56,7 @@ Future<List<Breed>> findAllBreeds() async {
   return await breedDao.findAllBreeds();
 }
 
+// generate an image url for a given breed
 Future<String> getImageUrl(String breedName) async {
   try {
     final response =
@@ -124,6 +126,7 @@ Shimmer displayShimmer(BuildContext context) {
   );
 }
 
+// holds the state value
 class BreedBloc extends Bloc<List<Breed>, List<Breed>> {
   BreedBloc() : super(<Breed>[]);
 

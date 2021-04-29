@@ -10,6 +10,7 @@ import 'components.dart';
 import 'fragments/login.dart';
 import 'models.dart';
 
+/// Custom [DogBlocObserver] which observes all bloc and cubit instances.
 class DogBlocObserver extends BlocObserver {
   @override
   void onEvent(Bloc bloc, Object event) {
