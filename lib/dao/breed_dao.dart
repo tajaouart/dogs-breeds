@@ -10,7 +10,7 @@ class BreedDao {
     database = db;
   }
 
-  Future<void> insertAlphabet(Breed breed) async {
+  Future<void> insertBreed(Breed breed) async {
     await (await database).insert(
       'breeds',
       breed.toMap(),

@@ -7,7 +7,8 @@ class Api {
   Future<List<Breed>> getAllBreeds() async {
     try {
       final response = await Dio().get('https://dog.ceo/api/breeds/list/all');
-      List<Breed> breeds = Breed.fromMap(response.data['message']);
+      List<Breed> breeds =
+          BreedResponse.fromJson(response.data['message']).breeds;
 
       return breeds;
     } catch (e) {
@@ -31,8 +32,7 @@ class Api {
     try {
       final response =
           await Dio().get('https://dog.ceo/api/breed/$breed/images/random');
-      String randomImage = response.data['message'] as String;
-      return randomImage;
+      return response.data['message'] as String;
     } catch (e) {
       print(e);
     }

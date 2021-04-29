@@ -3,11 +3,11 @@
 
 ## Provider
 
-Provider version is in the main branch.
+The implementation of Provider is in the main branch.
 
 ## Bloc
 
-Bloc version of the app is in the bloc branch.
+There are two implementations of Bloc in both  bloc-implementing1 and bloc-implementing1 branches.
 
 
 ### Trello :

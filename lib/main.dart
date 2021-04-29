@@ -1,7 +1,6 @@
 import 'package:dogs_breeds/fragments/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'fragments/login.dart';
@@ -10,28 +9,7 @@ import 'model/breed_repo.dart';
 import 'model/components.dart';
 import 'model/models.dart';
 
-class DogBlocObserver extends BlocObserver {
-  @override
-  void onEvent(Bloc bloc, Object event) {
-    super.onEvent(bloc, event);
-    print(event);
-  }
-
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    print(transition);
-  }
-
-  @override
-  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    print(error);
-    super.onError(bloc, error, stackTrace);
-  }
-}
-
 void main() {
-  Bloc.observer = DogBlocObserver();
   runApp(MyApp());
 }
 
@@ -44,8 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BlocProvider(
-          create: (_) => BreedBloc(), child: MyHomePage(title: 'Dogs-breeds')),
+      home: MyHomePage(title: 'Dogs-breeds'),
     );
   }
 }
@@ -109,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // start fetching data
     breedsBloc..getBreeds();
 
     return Scaffold(

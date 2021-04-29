@@ -42,11 +42,11 @@ void main() {
   test('Post content should be returned in the response', () async {
     final api = Api();
 
-    dynamic reponse = await api.login('enzo', '123456');
+    dynamic response = await api.login('enzo', '123456');
 
-    expect(reponse, isNot(null));
-    expect(reponse['name'], 'enzo');
-    expect(reponse['passwd'], '123456');
+    expect(response, isNot(null));
+    expect(response['name'], 'enzo');
+    expect(response['passwd'], '123456');
   });
 
   test('Post with no content should also return a response', () async {

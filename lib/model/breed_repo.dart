@@ -3,6 +3,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'models.dart';
 
+// acts as a fetcher
 class BreedRepository {
   static String url = 'https://dog.ceo/api/breeds/list/all';
 
@@ -19,17 +20,18 @@ class BreedRepository {
   }
 }
 
+// holds the value of the bloc state
 class BreedListBloc {
   final BreedRepository _breedRepository = BreedRepository();
   final BehaviorSubject<BreedResponse> _subject =
       BehaviorSubject<BreedResponse>();
 
-  getBreeds() async {
+  Future<void> getBreeds() async {
     BreedResponse response = (await _breedRepository.getBreeds());
     _subject.sink.add(response);
   }
 
-  dispose() {
+  void dispose() {
     _subject.close();
   }
 

@@ -34,17 +34,7 @@ class Breed {
   String imageUrl;
   List<dynamic> subBreeds;
 
-  static List<Breed> fromMap(Map<String, dynamic> map) {
-    Iterable<dynamic> keys = map.keys;
-    Iterable<dynamic> values = map.values;
-    return List<Breed>.generate(
-        map.keys.length,
-        (int index) => Breed(
-            id: Uuid().v1(),
-            name: keys.elementAt(index),
-            subBreeds: values.elementAt(index)));
-  }
-
+  // needed for db dao
   Map<String, dynamic> toMap() {
     return <String, String>{
       'id': id,
